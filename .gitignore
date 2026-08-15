@@ -1,0 +1,49 @@
+# Prerequisites / Build Directories
+bin/
+build/
+out/
+dist/
+
+# Compiled Executables & Binaries
+*.exe
+*.out
+*.app
+*.hex
+
+# Compiled Object files & Libraries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# Debug Information
+*.pdb
+*.idb
+*.ilk
+*.dSYM/
+
+# Simulation Traces & Logs
+*.vcd
+*.log
+*.trace
+*.dump
+
+# IDE & Editor Configurations
+.vscode/
+.vs/
+.idea/
+*.suo
+*.user
+*.useroscore
+*.sln.docstates
+
+# OS Generated Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.Spotlight-V100
+.Trashes
