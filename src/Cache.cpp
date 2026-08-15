@@ -16,3 +16,22 @@ uint32_t Cache::getOffset(uint32_t addr) const {
     return addr & ((1U << NUM_OFFSET_BITS) - 1);
 }
 
+int Cache::findWay(uint32_t set_idx, uint32_t tag) const {
+    for (int i = 0; i < ASSOCIATIVITY; i++){
+        if(sets[set_idx].ways[i].valid && sets[set_idx].ways[i].tag == tag){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int Cache::getLRUWay(uint32_t set_idx){
+    for (int i = 0; i < ASSOCIATIVITY; i++){
+        if(sets[set_idx].ways[i].valid == false){
+            return i;
+        }
+    }
+
+    
+}
+

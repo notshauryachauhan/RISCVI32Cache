@@ -85,7 +85,7 @@ CacheImplementation/
 - **[`include/Memory.h`](include/Memory.h)** & **[`src/Memory.cpp`](src/Memory.cpp)**:
   Implements a 64 KB byte-addressable physical memory (`dataMem`) and instruction memory (`instrMem`) with little-endian word/byte access methods (`loadWord`, `storeWord`, `loadByte`, `storeByte`, `fetchInstruction`, `loadProgram`).
 - **[`src/Cache.cpp`](src/Cache.cpp)**:
-  Implements cache controller methods: tag/index/offset extraction, set associative lookup (`findWay`), LRU tracking (`updateLRU`, `getLRUWay`), memory line filling (`fetchBlock`), write-back evictions (`evictBlock`), and statistics reporting (`printStats`).
+  Implements cache controller methods: tag/index/offset address extraction, set-associative lookup (`findWay`), LRU way selection (`getLRUWay`), memory line fetching (`fetchBlock`), write-back evictions (`evictBlock`), and statistics reporting (`printStats`).
 - **[`build.bat`](build.bat)**:
   Automated build script for MinGW-w64 with flags `-std=c++17 -Wall -Wextra -Iinclude`, error handling, interactive run prompts, and `clean` argument support.
 
@@ -98,14 +98,16 @@ flowchart LR
     subgraph Done [Completed]
         M1[Memory Model 64KB]
         M2[Cache Geometry Config]
-        M3[Cache Structures Declared]
-        M4[Build System build.bat]
+        M3[Address Decomposition]
+        M4[Set-Associative Tag Search]
+        M5[Build System & Tooling]
     end
 
     subgraph Current [In Progress]
-        C1[Cache Controller Impl]
-        C2[LRU Eviction & Write-Back]
-        C3[Driver & Test Suite in main.cpp]
+        C1[LRU Victim Selection]
+        C2[Line Fetch & Dirty Eviction]
+        C3[Load/Store Controller Logic]
+        C4[Test Suite in main.cpp]
     end
 
     subgraph Future [Future Milestones]
@@ -123,14 +125,15 @@ flowchart LR
 - [x] Binary instruction file parser (`loadProgram`).
 - [x] Configurable geometry header with compile-time assertions (`CacheConfig.h`).
 - [x] Declaration of `CacheBlock`, `CacheSet`, LRU state, and `Cache` controller (`Cache.h`).
+- [x] Address decomposition methods: `getTag()`, `getIndex()`, `getOffset()` (`Cache.cpp`).
+- [x] Set-associative tag lookup and hit/miss detection: `findWay()` (`Cache.cpp`).
 - [x] Windows one-click compilation script (`build.bat`) with `clean` and `run` commands.
 - [x] Repository `.gitignore` configured for C++ build artifacts, traces, and IDE files.
 
 ### 🔄 In Progress
-- [ ] Implement `Cache` methods in `src/Cache.cpp`:
-  - `getTag()`, `getIndex()`, `getOffset()` address bit manipulation.
-  - `findWay()`: Associative tag search and hit/miss detection.
-  - `getLRUWay()` & `updateLRU()`: LRU replacement logic.
+- [ ] Complete `Cache` controller methods in `src/Cache.cpp`:
+  - `getLRUWay()`: Find empty line or identify LRU victim way based on counters.
+  - `updateLRU()`: Update LRU status/rank upon access.
   - `fetchBlock()`: Fetch 16-byte block from `Memory` on read/write miss.
   - `evictBlock()`: Write dirty blocks back to `Memory` on replacement.
   - `loadWord()`, `loadByte()`, `storeWord()`, `storeByte()` with write-back policy.
