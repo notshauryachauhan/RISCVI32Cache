@@ -73,6 +73,7 @@ CacheImplementation/
 │   └── Memory.cpp       # Byte/Word load/store operations and program loading
 ├── .gitignore           # Git ignore patterns for binaries, traces, and IDE files
 ├── build.bat            # One-click Windows build script (MinGW-w64 GCC)
+├── Makefile             # GNU Make build system for Linux / macOS
 ├── main.cpp             # Driver and testbench entry point
 └── README.md            # Project documentation and specifications
 ```
@@ -100,11 +101,11 @@ flowchart LR
         M2[Cache Geometry Config]
         M3[Address Decomposition]
         M4[Set-Associative Tag Search]
-        M5[Build System & Tooling]
+        M5[LRU Replacement Logic]
+        M6[Build System & Tooling]
     end
 
     subgraph Current [In Progress]
-        C1[LRU Victim Selection]
         C2[Line Fetch & Dirty Eviction]
         C3[Load/Store Controller Logic]
         C4[Test Suite in main.cpp]
@@ -123,17 +124,16 @@ flowchart LR
 ### ✅ Completed
 - [x] 64 KB byte-addressable main memory with little-endian access (`Memory.h`, `Memory.cpp`).
 - [x] Binary instruction file parser (`loadProgram`).
-- [x] Configurable geometry header with compile-time assertions (`CacheConfig.h`).
+- [x] Configurable geometry header with pure `constexpr` bitfield calculation (`const_log2`) and compile-time assertions (`CacheConfig.h`).
 - [x] Declaration of `CacheBlock`, `CacheSet`, LRU state, and `Cache` controller (`Cache.h`).
 - [x] Address decomposition methods: `getTag()`, `getIndex()`, `getOffset()` (`Cache.cpp`).
 - [x] Set-associative tag lookup and hit/miss detection: `findWay()` (`Cache.cpp`).
-- [x] Windows one-click compilation script (`build.bat`) with `clean` and `run` commands.
+- [x] LRU victim way selection (`getLRUWay()`) and LRU counter aging logic (`updateLRU()`) (`Cache.cpp`).
+- [x] Multi-platform build tooling: Windows batch script (`build.bat`) and GNU `Makefile` with auto-dependency tracking (`Makefile`).
 - [x] Repository `.gitignore` configured for C++ build artifacts, traces, and IDE files.
 
 ### 🔄 In Progress
-- [ ] Complete `Cache` controller methods in `src/Cache.cpp`:
-  - `getLRUWay()`: Find empty line or identify LRU victim way based on counters.
-  - `updateLRU()`: Update LRU status/rank upon access.
+- [ ] Complete remaining `Cache` controller methods in `src/Cache.cpp`:
   - `fetchBlock()`: Fetch 16-byte block from `Memory` on read/write miss.
   - `evictBlock()`: Write dirty blocks back to `Memory` on replacement.
   - `loadWord()`, `loadByte()`, `storeWord()`, `storeByte()` with write-back policy.
@@ -160,6 +160,24 @@ flowchart LR
 ### Prerequisites
 - **Compiler**: GCC / MinGW-w64 with C++17 support (`g++`).
 
+### Build using Make (Linux / macOS)
+- **Compile optimized release build**:
+  ```bash
+  make
+  ```
+- **Compile and Run immediately**:
+  ```bash
+  make run
+  ```
+- **Build with debug symbols**:
+  ```bash
+  make debug
+  ```
+- **Clean output files**:
+  ```bash
+  make clean
+  ```
+
 ### Build using Batch Script (Windows)
 - **One-Click**: Double-click [`build.bat`](build.bat) in Windows Explorer.
 - **Compile via Command Prompt / PowerShell**:
@@ -176,7 +194,7 @@ flowchart LR
   ```
 
 ### Manual Compilation
-```cmd
-g++ -std=c++17 -Wall -Wextra -Iinclude main.cpp src/*.cpp -o bin\cache_sim.exe
-bin\cache_sim.exe
+```bash
+g++ -std=c++17 -Wall -Wextra -Iinclude main.cpp src/*.cpp -o bin/cache_sim
+./bin/cache_sim
 ```
